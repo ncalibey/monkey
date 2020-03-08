@@ -155,7 +155,7 @@ type PrefixExpression struct {
 	Right Expression
 }
 
-func (p *PrefixExpression) expressionNode() 	 {}
+func (p *PrefixExpression) expressionNode()      {}
 func (p *PrefixExpression) TokenLiteral() string { return p.Token.Literal }
 func (p *PrefixExpression) String() string {
 	var out bytes.Buffer
@@ -179,7 +179,7 @@ type InfixExpression struct {
 	Right Expression
 }
 
-func (i *InfixExpression) expressionNode()                                                             {}
+func (i *InfixExpression) expressionNode()      {}
 func (i *InfixExpression) TokenLiteral() string { return i.Token.Literal }
 func (i *InfixExpression) String() string {
 	var out bytes.Buffer
@@ -200,19 +200,19 @@ type Boolean struct {
 	Value bool
 }
 
-func (b *Boolean) expressionNode() 		{}
+func (b *Boolean) expressionNode()      {}
 func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
-func (b *Boolean) String() string 		{ return b.Token.Literal }
+func (b *Boolean) String() string       { return b.Token.Literal }
 
 // IfExpression represents an if expression within an AST.
 type IfExpression struct {
-	Token token.Token
-	Condition Expression
+	Token       token.Token
+	Condition   Expression
 	Consequence *BlockStatement
 	Alternative *BlockStatement
 }
 
-func (ie *IfExpression) expressionNode() {}
+func (ie *IfExpression) expressionNode()      {}
 func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *IfExpression) String() string {
 	var out bytes.Buffer
@@ -237,8 +237,8 @@ type BlockStatement struct {
 	Statements []Statement
 }
 
-func (b *BlockStatement) statementNode() {}
-func (b *BlockStatement) TokenLiterael() string { return b.Token.Literal }
+func (b *BlockStatement) statementNode()       {}
+func (b *BlockStatement) TokenLiteral() string { return b.Token.Literal }
 func (b *BlockStatement) String() string {
 	var out bytes.Buffer
 
@@ -251,12 +251,12 @@ func (b *BlockStatement) String() string {
 
 type FunctionLiteral struct {
 	// The 'fn' token
-	Token token.Token
+	Token      token.Token
 	Parameters []*Identifier
-	Body *BlockStatement
+	Body       *BlockStatement
 }
 
-func (fl *FunctionLiteral) expressionNode() {}
+func (fl *FunctionLiteral) expressionNode()      {}
 func (fl *FunctionLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FunctionLiteral) String() string {
 	var out bytes.Buffer
@@ -279,11 +279,11 @@ type CallExpression struct {
 	// The '(' token
 	Token token.Token
 	// Identifier or FunctionLiteral
-	Function Expression
+	Function  Expression
 	Arguments []Expression
 }
 
-func (ce *CallExpression) expressionNode() {}
+func (ce *CallExpression) expressionNode()      {}
 func (ce *CallExpression) TokenLiteral() string { return ce.Token.Literal }
 func (ce *CallExpression) String() string {
 	var out bytes.Buffer
