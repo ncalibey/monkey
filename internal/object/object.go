@@ -19,6 +19,7 @@ const (
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
+	STRING_OBJ       = "STRING"
 )
 
 // Object represents a value that is being evaluated.
@@ -28,6 +29,15 @@ type Object interface {
 	// Inspect returns a string representation of the Object's value.
 	Inspect() string
 }
+
+// String implements the Object interface for string values.
+type String struct {
+	// Value is the value assocated with the String.
+	Value string
+}
+
+func (s *String) Type() ObjectType { return STRING_OBJ }
+func (s *String) Inspect() string  { return s.Value }
 
 // Integer implements the Object interface for integer values.
 type Integer struct {

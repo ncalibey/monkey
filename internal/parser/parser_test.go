@@ -14,9 +14,9 @@ const (
 
 func TestLetStatement(t *testing.T) {
 	tests := []struct {
-		input string
+		input              string
 		expectedIdentifier string
-		expectedValue interface{}
+		expectedValue      interface{}
 	}{
 		{"let x = 5", "x", 5},
 		{"let y = true;", "y", true},
@@ -47,7 +47,7 @@ func TestLetStatement(t *testing.T) {
 
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
-		input string
+		input         string
 		expectedValue interface{}
 	}{
 		{"return 5;", 5},
@@ -506,7 +506,7 @@ func TestFunctionLiteralParsing(t *testing.T) {
 
 func TestFunctionParameterParsing(t *testing.T) {
 	tests := []struct {
-		input string
+		input          string
 		expectedParams []string
 	}{
 		{input: "fn() {};", expectedParams: []string{}},
@@ -570,24 +570,24 @@ func TestCallExpressionParsing(t *testing.T) {
 
 func TestCallExpressionParameterParsing(t *testing.T) {
 	tests := []struct {
-		input string
+		input         string
 		expectedIdent string
-		expectedArgs []string
+		expectedArgs  []string
 	}{
 		{
-			input: "add();",
+			input:         "add();",
 			expectedIdent: "add",
-			expectedArgs: []string{},
+			expectedArgs:  []string{},
 		},
 		{
-			input: "add(1);",
+			input:         "add(1);",
 			expectedIdent: "add",
-			expectedArgs: []string{"1"},
+			expectedArgs:  []string{"1"},
 		},
 		{
-			input: "add(1, 2 * 3, 4 + 5);",
+			input:         "add(1, 2 * 3, 4 + 5);",
 			expectedIdent: "add",
-			expectedArgs: []string{"1", "(2 * 3)", "(4 + 5)"},
+			expectedArgs:  []string{"1", "(2 * 3)", "(4 + 5)"},
 		},
 	}
 
@@ -607,7 +607,7 @@ func TestCallExpressionParameterParsing(t *testing.T) {
 			return
 		}
 
-		if len (exp.Arguments) != len(tt.expectedArgs) {
+		if len(exp.Arguments) != len(tt.expectedArgs) {
 			t.Fatalf("wrong number of arguments. want %d, got %d", len(tt.expectedArgs), len(exp.Arguments))
 		}
 
@@ -616,6 +616,25 @@ func TestCallExpressionParameterParsing(t *testing.T) {
 				t.Errorf("argument %d wrong. want %q, got %q", i, arg, exp.Arguments[i].String())
 			}
 		}
+	}
+}
+
+func TestStringLiteralExpression(t *testing.T) {
+	input := `"hello world";`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	literal, ok := stmt.Expression.(*ast.StringLiteral)
+	if !ok {
+		t.Fatalf("exp not *ast.StringLiteral. got %T", stmt.Expression)
+	}
+
+	if literal.Value != "hello world" {
+		t.Errorf("literal.Value not %q. got %q", "hello world", literal.Value)
 	}
 }
 

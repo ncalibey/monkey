@@ -1,12 +1,12 @@
 package token
 
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
-	"true": TRUE,
-	"false": FALSE,
-	"if": IF,
-	"else": ELSE,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
 	"return": RETURN,
 }
 
@@ -24,18 +24,19 @@ const (
 	EOF     = "EOF"
 
 	// Identifiers + literals
-	IDENT = "IDENT" // e.g. add, foobar, x, y, ...
-	INT   = "INT"   // e.g. 123456
+	IDENT  = "IDENT" // e.g. add, foobar, x, y, ...
+	INT    = "INT"   // e.g. 123456
+	STRING = "STRING"
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
 	MINUS    = "-"
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
-	EQ = "=="
-	NOT_EQ = "!="
+	EQ       = "=="
+	NOT_EQ   = "!="
 
 	LT = "<"
 	GT = ">"
@@ -52,11 +53,11 @@ const (
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
-	TRUE = "TRUE"
-	FALSE = "FALSE"
-	IF = "IF"
-	ELSE = "ELSE"
-	RETURN = "RETURN"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 // TokenType represents the various tokens that Monkey recognizes.
