@@ -12,6 +12,9 @@ import (
 // ObjectType details what the underlying Type of the object is.
 type ObjectType string
 
+// BuiltinFunction represents functions build into the language.
+type BuiltinFunction func(args ...Object) Object
+
 const (
 	INTEGER_OBJ      = "INTEGER"
 	BOOLEAN_OBJ      = "BOOLEAN"
@@ -20,6 +23,7 @@ const (
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
 	STRING_OBJ       = "STRING"
+	BUILTIN_OBJ      = "BUILTIN"
 )
 
 // Object represents a value that is being evaluated.
@@ -29,6 +33,15 @@ type Object interface {
 	// Inspect returns a string representation of the Object's value.
 	Inspect() string
 }
+
+// Builtin implements the Object interface for built in functions.
+type Builtin struct {
+	// Fn is the associated BuiltinFunction
+	Fn BuiltinFunction
+}
+
+func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }
+func (b *Builtin) Inspect() string  { return "builtin function" }
 
 // String implements the Object interface for string values.
 type String struct {
