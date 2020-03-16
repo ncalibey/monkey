@@ -4,6 +4,7 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"strings"
 
 	"github.com/ncalibey/monkey/internal/ast"
@@ -15,6 +16,12 @@ type ObjectType string
 // BuiltinFunction represents functions build into the language.
 type BuiltinFunction func(args ...Object) Object
 
+// HashKey is the internal value used for mapping literals as keys within a hash.
+type HashKey struct {
+	Type  ObjectType
+	Value uint64
+}
+
 const (
 	INTEGER_OBJ      = "INTEGER"
 	BOOLEAN_OBJ      = "BOOLEAN"
@@ -25,7 +32,13 @@ const (
 	STRING_OBJ       = "STRING"
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
+	HASH_OBJ         = "HASH"
 )
+
+// Hashable is implemented by Objects that can be used as hash keys.
+type Hashable interface {
+	HashKey() HashKey
+}
 
 // Object represents a value that is being evaluated.
 type Object interface {
@@ -44,7 +57,7 @@ type Builtin struct {
 func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }
 func (b *Builtin) Inspect() string  { return "builtin function" }
 
-// String implements the Object interface for string values.
+// String implements the Object and hashable interfaces for string values.
 type String struct {
 	// Value is the value assocated with the String.
 	Value string
@@ -52,8 +65,14 @@ type String struct {
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
+func (s *String) HashKey() HashKey {
+	h := fnv.New64a()
+	h.Write([]byte(s.Value))
 
-// Integer implements the Object interface for integer values.
+	return HashKey{Type: s.Type(), Value: h.Sum64()}
+}
+
+// Integer implements the Object and Hash interfaces for integer values.
 type Integer struct {
 	// Value is the value associated with the Integer.
 	Value int64
@@ -61,8 +80,9 @@ type Integer struct {
 
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
+func (i *Integer) HashKey() HashKey { return HashKey{Type: i.Type(), Value: uint64(i.Value)} }
 
-// Boolean implements the Object interface for boolean values.
+// Boolean implements the Object and Hashable interfaces for boolean values.
 type Boolean struct {
 	// Value is the value associated with the Boolean.
 	Value bool
@@ -70,6 +90,17 @@ type Boolean struct {
 
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
+func (b *Boolean) HashKey() HashKey {
+	var value uint64
+
+	if b.Value {
+		value = 1
+	} else {
+		value = 0
+	}
+
+	return HashKey{Type: b.Type(), Value: value}
+}
 
 // Null implements the Object interface for null values.
 type Null struct{}
@@ -142,6 +173,34 @@ func (a *Array) Inspect() string {
 	out.WriteString("[")
 	out.WriteString(strings.Join(elements, ", "))
 	out.WriteString("]")
+
+	return out.String()
+}
+
+// HashPair is a key-value pair that is associated with a Hash.
+type HashPair struct {
+	Key   Object
+	Value Object
+}
+
+// Array implements the Object interface for hashes.
+type Hash struct {
+	// Pairs are the key-value pairs associated with the Hash.
+	Pairs map[HashKey]HashPair
+}
+
+func (h *Hash) Type() ObjectType { return HASH_OBJ }
+func (h *Hash) Inspect() string {
+	var out bytes.Buffer
+
+	pairs := []string{}
+	for _, pair := range h.Pairs {
+		pairs = append(pairs, fmt.Sprintf(":%s: %s", pair.Key.Inspect(), pair.Value.Inspect()))
+	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
 
 	return out.String()
 }
